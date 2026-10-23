@@ -82,12 +82,37 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Setup music player
     setupMusicPlayer();
-    
+
+    // --- BUTTON EVENT LISTENERS ARE CONFIGURED HERE ---
+    const yesBtn1 = document.getElementById('yesBtn1');
+    const noBtn1 = document.getElementById('noBtn1');
+    const nextBtn = document.getElementById('nextBtn');
+    const yesBtn3 = document.getElementById('yesBtn3');
+    const noBtn3 = document.getElementById('noBtn3');
+
+    if (yesBtn1) {
+        yesBtn1.addEventListener('click', () => showNextQuestion(2));
+    }
+    if (noBtn1) {
+        noBtn1.addEventListener('mouseover', () => moveButton(noBtn1));
+        noBtn1.addEventListener('click', () => moveButton(noBtn1));
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => showNextQuestion(3));
+    }
+    if (yesBtn3) {
+        yesBtn3.addEventListener('click', () => celebrate());
+    }
+    if (noBtn3) {
+        noBtn3.addEventListener('mouseover', () => moveButton(noBtn3));
+        noBtn3.addEventListener('click', () => moveButton(noBtn3));
+    }
 });
 
 // Create floating hearts and bears
 function createFloatingElements() {
     const container = document.querySelector('.floating-elements');
+    if (!container) return;
     
     // Create hearts
     config.floatingEmojis.hearts.forEach(heart => {
@@ -118,7 +143,10 @@ function setRandomPosition(element) {
 // Function to show next question
 function showNextQuestion(questionNumber) {
     document.querySelectorAll('.question-section').forEach(q => q.classList.add('hidden'));
-    document.getElementById(`question${questionNumber}`).classList.remove('hidden');
+    const targetedQuestion = document.getElementById(`question${questionNumber}`);
+    if (targetedQuestion) {
+        targetedQuestion.classList.remove('hidden');
+    }
 }
 
 // Function to move the "No" button when clicked
@@ -136,39 +164,47 @@ const loveValue = document.getElementById('loveValue');
 const extraLove = document.getElementById('extraLove');
 
 function setInitialPosition() {
-    loveMeter.value = 100;
-    loveValue.textContent = 100;
-    loveMeter.style.width = '100%';
-}
-
-loveMeter.addEventListener('input', () => {
-    const value = parseInt(loveMeter.value);
-    loveValue.textContent = value;
-    
-    if (value > 100) {
-        extraLove.classList.remove('hidden');
-        const overflowPercentage = (value - 100) / 9900;
-        const extraWidth = overflowPercentage * window.innerWidth * 0.8;
-        loveMeter.style.width = `calc(100% + ${extraWidth}px)`;
-        loveMeter.style.transition = 'width 0.3s';
-        
-        // Show different messages based on the value
-        if (value >= 5000) {
-            extraLove.classList.add('super-love');
-            extraLove.textContent = config.loveMessages.extreme;
-        } else if (value > 1000) {
-            extraLove.classList.remove('super-love');
-            extraLove.textContent = config.loveMessages.high;
-        } else {
-            extraLove.classList.remove('super-love');
-            extraLove.textContent = config.loveMessages.normal;
-        }
-    } else {
-        extraLove.classList.add('hidden');
-        extraLove.classList.remove('super-love');
+    if (loveMeter && loveValue) {
+        loveMeter.value = 100;
+        loveValue.textContent = 100;
         loveMeter.style.width = '100%';
     }
-});
+}
+
+if (loveMeter) {
+    loveMeter.addEventListener('input', () => {
+        const value = parseInt(loveMeter.value);
+        if (loveValue) loveValue.textContent = value;
+        
+        if (value > 100) {
+            if (extraLove) extraLove.classList.remove('hidden');
+            const overflowPercentage = (value - 100) / 9900;
+            const extraWidth = overflowPercentage * window.innerWidth * 0.8;
+            loveMeter.style.width = `calc(100% + ${extraWidth}px)`;
+            loveMeter.style.transition = 'width 0.3s';
+            
+            if (extraLove) {
+                // Show different messages based on the value
+                if (value >= 5000) {
+                    extraLove.classList.add('super-love');
+                    extraLove.textContent = config.loveMessages.extreme;
+                } else if (value > 1000) {
+                    extraLove.classList.remove('super-love');
+                    extraLove.textContent = config.loveMessages.high;
+                } else {
+                    extraLove.classList.remove('super-love');
+                    extraLove.textContent = config.loveMessages.normal;
+                }
+            }
+        } else {
+            if (extraLove) {
+                extraLove.classList.add('hidden');
+                extraLove.classList.remove('super-love');
+            }
+            loveMeter.style.width = '100%';
+        }
+    });
+}
 
 // Initialize love meter
 window.addEventListener('DOMContentLoaded', setInitialPosition);
@@ -178,12 +214,18 @@ window.addEventListener('load', setInitialPosition);
 function celebrate() {
     document.querySelectorAll('.question-section').forEach(q => q.classList.add('hidden'));
     const celebration = document.getElementById('celebration');
-    celebration.classList.remove('hidden');
+    if (celebration) {
+        celebration.classList.remove('hidden');
+    }
     
     // Set celebration messages
-    document.getElementById('celebrationTitle').textContent = config.celebration.title;
-    document.getElementById('celebrationMessage').textContent = config.celebration.message;
-    document.getElementById('celebrationEmojis').textContent = config.celebration.emojis;
+    const celTitle = document.getElementById('celebrationTitle');
+    const celMsg = document.getElementById('celebrationMessage');
+    const celEmo = document.getElementById('celebrationEmojis');
+
+    if (celTitle) celTitle.textContent = config.celebration.title;
+    if (celMsg) celMsg.textContent = config.celebration.message;
+    if (celEmo) celEmo.textContent = config.celebration.emojis;
     
     // Create heart explosion effect
     createHeartExplosion();
@@ -191,12 +233,15 @@ function celebrate() {
 
 // Create heart explosion animation
 function createHeartExplosion() {
+    const container = document.querySelector('.floating-elements');
+    if (!container) return;
+
     for (let i = 0; i < 50; i++) {
         const heart = document.createElement('div');
         const randomHeart = config.floatingEmojis.hearts[Math.floor(Math.random() * config.floatingEmojis.hearts.length)];
         heart.innerHTML = randomHeart;
         heart.className = 'heart';
-        document.querySelector('.floating-elements').appendChild(heart);
+        container.appendChild(heart);
         setRandomPosition(heart);
     }
 }
@@ -207,6 +252,8 @@ function setupMusicPlayer() {
     const musicToggle = document.getElementById('musicToggle');
     const bgMusic = document.getElementById('bgMusic');
     const musicSource = document.getElementById('musicSource');
+
+    if (!musicControls || !bgMusic || !musicSource) return;
 
     // Only show controls if music is enabled in config
     if (!config.music.enabled) {
@@ -219,72 +266,26 @@ function setupMusicPlayer() {
     bgMusic.volume = config.music.volume || 0.5;
     bgMusic.load();
 
-    // Try autoplay if enabled
-      if (config.music.autoplay) {
-        const playPromise = bgMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log("Autoplay prevented by browser");
-                musicToggle.textContent = config.music.startText;
-            });
-        }
-    }
-} // <- Make sure this closing bracket is present before adding the new code block!
-
-
-    // Toggle music on button click
-    musicToggle.addEventListener('click', () => {
-        if (bgMusic.paused) {
-            bgMusic.play();
-            musicToggle.textContent = config.music.stopText;
-        } else {
-            bgMusic.pause();
-            musicToggle.textContent = config.music.startText;
-        }
-    });
-} 
-
-// ============================================
-// 🎯 BUTTON CLICK EVENT LISTENERS
-// ============================================
-window.addEventListener('DOMContentLoaded', () => {
-    // --- Question 1 Buttons ---
-    const yesBtn1 = document.getElementById('yesBtn1');
-    const noBtn1 = document.getElementById('noBtn1');
-
-    if (yesBtn1) {
-        yesBtn1.addEventListener('click', () => {
-            showNextQuestion(2); // Switches to Question 2 (Love Meter)
-        });
-    }
-
-    if (noBtn1) {
-        // Option A: Make the button run away when hovered/clicked
-        noBtn1.addEventListener('mouseover', () => moveButton(noBtn1));
-        noBtn1.addEventListener('click', () => moveButton(noBtn1));
-    }
-
-    // --- Question 2 Button (Love Meter Next) ---
-    const nextBtn = document.getElementById('nextBtn');
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            showNextQuestion(3); // Switches to Question 3 (Big Proposal)
-        });
-    }
-
-    // --- Question 3 Buttons ---
-    const yesBtn3 = document.getElementById('yesBtn3');
-    const noBtn3 = document.getElementById('noBtn3');
-
-    if (yesBtn3) {
-        yesBtn3.addEventListener('click', () => {
-            celebrate(); // Triggers the final love explosion screen!
-        });
-    }
-
-    if (noBtn3) {
-        // Makes the final "No" button run away as well
-        noBtn3.addEventListener('mouseover', () => moveButton(noBtn3));
-        noBtn3.addEventListener('click', () => moveButton(noBtn3));
-    }
+    // Toggle button configuration
+    if (musicToggle) {
+        musicToggle.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggle.textContent = config.music.stopText || "🔇 Stop Music";
+            } else {
+                bgMusic.pause();
+                musicToggle.textContent = config.music.startText || "🎵 Play Music";
+            }
 });
+}
+// Try autoplay if enabled
+if (config.music.autoplay) {
+const playPromise = bgMusic.play();
+if (playPromise !== undefined) {
+playPromise.catch(error => {
+console.log("Autoplay prevented by browser setup");
+if (musicToggle) musicToggle.textContent = config.music.startText || "🎵 Play Music";
+});
+}
+}
+}
