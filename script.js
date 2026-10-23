@@ -82,6 +82,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Setup music player
     setupMusicPlayer();
+    
 });
 
 // Create floating hearts and bears
@@ -219,7 +220,7 @@ function setupMusicPlayer() {
     bgMusic.load();
 
     // Try autoplay if enabled
-    if (config.music.autoplay) {
+      if (config.music.autoplay) {
         const playPromise = bgMusic.play();
         if (playPromise !== undefined) {
             playPromise.catch(error => {
@@ -228,6 +229,8 @@ function setupMusicPlayer() {
             });
         }
     }
+} // <- Make sure this closing bracket is present before adding the new code block!
+
 
     // Toggle music on button click
     musicToggle.addEventListener('click', () => {
@@ -240,3 +243,48 @@ function setupMusicPlayer() {
         }
     });
 } 
+
+// ============================================
+// 🎯 BUTTON CLICK EVENT LISTENERS
+// ============================================
+window.addEventListener('DOMContentLoaded', () => {
+    // --- Question 1 Buttons ---
+    const yesBtn1 = document.getElementById('yesBtn1');
+    const noBtn1 = document.getElementById('noBtn1');
+
+    if (yesBtn1) {
+        yesBtn1.addEventListener('click', () => {
+            showNextQuestion(2); // Switches to Question 2 (Love Meter)
+        });
+    }
+
+    if (noBtn1) {
+        // Option A: Make the button run away when hovered/clicked
+        noBtn1.addEventListener('mouseover', () => moveButton(noBtn1));
+        noBtn1.addEventListener('click', () => moveButton(noBtn1));
+    }
+
+    // --- Question 2 Button (Love Meter Next) ---
+    const nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            showNextQuestion(3); // Switches to Question 3 (Big Proposal)
+        });
+    }
+
+    // --- Question 3 Buttons ---
+    const yesBtn3 = document.getElementById('yesBtn3');
+    const noBtn3 = document.getElementById('noBtn3');
+
+    if (yesBtn3) {
+        yesBtn3.addEventListener('click', () => {
+            celebrate(); // Triggers the final love explosion screen!
+        });
+    }
+
+    if (noBtn3) {
+        // Makes the final "No" button run away as well
+        noBtn3.addEventListener('mouseover', () => moveButton(noBtn3));
+        noBtn3.addEventListener('click', () => moveButton(noBtn3));
+    }
+});
